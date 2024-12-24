@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo Development | Dashboard</title>
+    <link rel="shortcut icon" type="x-icon" href="LOGO.png">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="user-info">
+                <img src="LOGO.png" alt="Profile" id="userProfilePic" class="profile-pic">
+                <div>
+                    <div id="username" class="username">Loading...</div>
+                    <div id="userEmail" class="email">Loading...</div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-section="overview">
+                    <a href="#"><i class="fas fa-home"></i>Dashboard</a>
+                </li>
+                <li data-section="create-project">
+                    <a href="#"><i class="fas fa-plus"></i>Create Project</a>
+                </li>
+                <li data-section="projects">
+                    <a href="#"><i class="fas fa-project-diagram"></i>Projects</a>
+                </li>
+                <li data-section="activity">
+                    <a href="#"><i class="fas fa-chart-line"></i>Activity</a>
+                </li>
+                <li data-section="settings">
+                    <a href="#"><i class="fas fa-cog"></i>Settings</a>
+                </li>
+            </ul>
+            <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i>Logout</button>
+            <div class="footer-text">
+                <hr>
+                <h1>Made With ❤️ By 21geo</h1>
+                <p>© Copyright 2024 | Geodevelopment</p>
+                <hr>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section id="overview" class="section" style="display: none;">
+                <h1>Dashboard Overview</h1>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-code"></i></div>
+                        <div class="stat-info">
+                            <h3>Total Projects</h3>
+                            <p id="totalProjects">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                        <div class="stat-info">
+                            <h3>Active Projects</h3>
+                            <p id="activeProjects">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-overview">
+                    <h2>Development Progress</h2>
+                    <div class="progress-bars">
+                        <!-- Progress bars will be added dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Create Project Section -->
+            <section id="create-project" class="section" style="display: none;">
+                <h1>Create New Project</h1>
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label>Project Title</label>
+                        <input type="text" id="projectTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="projectDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="projectDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Image</label>
+                        <div class="image-upload">
+                            <input type="file" id="projectImage" accept="image/*">
+                            <input type="text" id="imageLink" placeholder="Or paste image URL">
+                            <div id="imagePreview"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">Create Project</button>
+                </form>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="section" style="display: none;">
+                <h1>My Projects</h1>
+                <div class="project-grid">
+                    <!-- Projects will be added dynamically -->
+                </div>
+            </section>
+
+            <!-- Activity Section -->
+            <section id="activity" class="section" style="display: none;">
+                <h1>Development Activity</h1>
+                <div class="activity-container">
+                    <button class="add-activity-btn">Add New Activity</button>
+                    <div class="activity-list">
+                        <!-- Activities will be added dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="section" style="display: none;">
+                <h1>Profile Settings</h1>
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label>Profile Picture</label>
+                        <div class="image-upload">
+                            <input type="file" id="profilePicture" accept="image/*">
+                            <div id="profilePreview"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" readonly>
+                    </div>
+                    <button type="submit" class="submit-btn">Save Changes</button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="activityModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Development Activity</h2>
+            <form id="activityForm">
+                <div class="form-group">
+                    <label>Activity Name</label>
+                    <input type="text" id="activityName" required>
+                </div>
+                <div class="form-group">
+                    <label>Progress (%)</label>
+                    <input type="number" id="activityProgress" min="0" max="100" required>
+                </div>
+                <button type="submit" class="submit-btn">Add Activity</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html> 
